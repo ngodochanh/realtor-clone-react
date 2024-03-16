@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import logo from '../assets/realtor-logo.svg';
+import logo from '/realtor-logo.svg';
 import { NAV_LINKS } from '../constants';
 
 function Header() {
