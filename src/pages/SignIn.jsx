@@ -22,13 +22,13 @@ function SignIn() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const auth = getAuth();
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    if (user) {
-      navigate('/');
-    }
     try {
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      if (user) {
+        navigate('/');
+      }
     } catch (error) {
       toast.error('Bad user credentials');
     }

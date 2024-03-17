@@ -55,7 +55,7 @@ function SignUp() {
         </div>
 
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form action="" className="space-y-6" onSubmit={onSubmit}>
+          <form className="space-y-6" onSubmit={onSubmit}>
             <input
               type="text"
               name="name"
