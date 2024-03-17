@@ -32,6 +32,7 @@ function SignIn() {
               name="email"
               placeholder="Email address"
               value={email}
+              autoComplete="email"
               className="w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition 
               ease-in-out"
               onChange={onChange}
@@ -43,6 +44,7 @@ function SignIn() {
                 name="password"
                 placeholder="Password"
                 value={password}
+                autoComplete="current-password"
                 className="w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
                 onChange={onChange}
               />

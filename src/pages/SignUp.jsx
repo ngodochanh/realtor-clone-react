@@ -38,7 +38,7 @@ function SignUp() {
       formDataCopy.timestamp = serverTimestamp();
 
       await setDoc(doc(db, 'users', user.uid), formDataCopy);
-      toast.success('Sign up was successful');
+      // toast.success('Sign up was successful');
       navigate('/');
     } catch (error) {
       toast.error('Something went wrong with the registration');
@@ -83,7 +83,7 @@ function SignUp() {
                 name="password"
                 placeholder="Password"
                 value={password}
-                autoComplete="password"
+                autoComplete="current-password"
                 className="w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
                 onChange={onChange}
               />
