@@ -7,6 +7,7 @@ import { db } from '../firebase';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { FORGOT_PASSWORD, HOME, SIGN_IN } from '../constants';
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -39,7 +40,7 @@ function SignUp() {
 
       await setDoc(doc(db, 'users', user.uid), formDataCopy);
       // toast.success('Sign up was successful');
-      navigate('/');
+      navigate(HOME.href);
     } catch (error) {
       toast.error('Something went wrong with the registration');
     }
@@ -47,7 +48,7 @@ function SignUp() {
 
   return (
     <section>
-      <h1 className="text-3xl text-center mt-6 font-bold">Sign Up</h1>
+      <h1 className="text-3xl text-center mt-6 font-bold capitalize">Sign Up</h1>
 
       <div className="flex justify-center flex-wrap items-center px-6 py-12 max-w-6xl mx-auto">
         <div className="mb-12 md:w-[67%] md:mb-6 lg:w-[50%]  ">
@@ -105,7 +106,7 @@ function SignUp() {
               <p className="">
                 Have an account?
                 <Link
-                  to="/sign-in"
+                  to={SIGN_IN.href}
                   className="text-red-600 hover:text-red-700 transition duration-200 ease-in-out ml-1"
                 >
                   Sign in
@@ -114,7 +115,7 @@ function SignUp() {
 
               <p>
                 <Link
-                  to="/forgot-password"
+                  to={FORGOT_PASSWORD.href}
                   className="text-blue-600 hover:text-blue-800 transition duration-200 ease-in-out"
                 >
                   Forgot password?

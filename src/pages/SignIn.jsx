@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
 import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { toast } from 'react-toastify';
+import { FORGOT_PASSWORD, HOME, SIGN_UP } from '../constants';
 
 function SignIn() {
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ function SignIn() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       if (user) {
-        navigate('/');
+        navigate(HOME.href);
       }
     } catch (error) {
       toast.error('Bad user credentials');
@@ -36,7 +37,7 @@ function SignIn() {
 
   return (
     <section>
-      <h1 className="text-3xl text-center mt-6 font-bold">Sign In</h1>
+      <h1 className="text-3xl text-center mt-6 font-bold capitalize">Sign In</h1>
 
       <div className="flex justify-center flex-wrap items-center px-6 py-12 max-w-6xl mx-auto">
         <div className="mb-12 md:w-[67%] md:mb-6 lg:w-[50%]  ">
@@ -84,7 +85,7 @@ function SignIn() {
               <p className="">
                 Don't have an account?
                 <Link
-                  to="/sign-up"
+                  to={SIGN_UP.href}
                   className="text-red-600 hover:text-red-700 transition duration-200 ease-in-out ml-1"
                 >
                   Register
@@ -93,7 +94,7 @@ function SignIn() {
 
               <p>
                 <Link
-                  to="/forgot-password"
+                  to={FORGOT_PASSWORD.href}
                   className="text-blue-600 hover:text-blue-800 transition duration-200 ease-in-out"
                 >
                   Forgot password?

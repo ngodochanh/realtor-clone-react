@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import OAuth from '../components/OAuth';
 import { toast } from 'react-toastify';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { SIGN_IN, SIGN_UP } from '../constants';
 
 function FotgotPasword() {
   const [email, setEmail] = useState('');
@@ -49,7 +50,7 @@ function FotgotPasword() {
               <p className="">
                 Don't have an account?
                 <Link
-                  to="/sign-up"
+                  to={SIGN_UP.href}
                   className="text-red-600 hover:text-red-700 transition duration-200 ease-in-out ml-1"
                 >
                   Register
@@ -57,7 +58,10 @@ function FotgotPasword() {
               </p>
 
               <p>
-                <Link to="/sign-in" className="text-blue-600 hover:text-blue-800 transition duration-200 ease-in-out">
+                <Link
+                  to={SIGN_IN.href}
+                  className="text-blue-600 hover:text-blue-800 transition duration-200 ease-in-out"
+                >
                   Sign in instead
                 </Link>
               </p>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { HOME } from '../constants';
 
 function Profile() {
   const auth = getAuth();
@@ -20,7 +21,7 @@ function Profile() {
   const onLogout = async () => {
     try {
       await signOut(auth);
-      navigate('/');
+      navigate(HOME.href);
     } catch (error) {
       console.log(error);
     }
@@ -61,8 +62,8 @@ function Profile() {
               value={name}
               disabled={!changeDetail}
               onChange={onChange}
-              className={`w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out ${
-                changeDetail && 'bg-red-200'
+              className={`w-full px-4 py-2 text-xl text-gray-700 border border-gray-300 rounded transition ease-in-out ${
+                changeDetail ? 'bg-red-200' : 'bg-white'
               }`}
             />
 
@@ -72,7 +73,7 @@ function Profile() {
               value={email}
               disabled
               onChange={onChange}
-              className={`w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out`}
+              className="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out"
             />
 
             <div className="flex justify-between whitespace-nowrap  text-sm sm:text-lg">
