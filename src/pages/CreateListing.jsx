@@ -134,7 +134,13 @@ function CreateListing() {
 
     // thêm url hình ảnh, thêm vị trí địa lý
     // xóa vĩ độ và kinh độ (do không sử dụng nó), địa chỉ (bởi vì đã thay đổi địa chỉ thành đến vĩ độ và kinh độ là 2)
-    const formDataCopy = { ...formData, imgUrls, geolocation, timestamp: serverTimestamp() };
+    const formDataCopy = {
+      ...formData,
+      imgUrls,
+      geolocation,
+      timestamp: serverTimestamp(),
+      userRef: auth.currentUser.uid,
+    };
     delete formDataCopy.images;
     !formDataCopy.offer && delete formDataCopy.discountedPrice;
     delete formDataCopy.latitude;
