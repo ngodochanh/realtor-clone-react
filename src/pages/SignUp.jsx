@@ -103,7 +103,7 @@ function SignUp() {
             </div>
 
             <div className="flex justify-between whitespace-nowrap text-sm sm:text-lg">
-              <p className="">
+              <p>
                 Have an account?
                 <Link
                   to={SIGN_IN.href}

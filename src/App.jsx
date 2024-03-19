@@ -27,7 +27,9 @@ function App() {
           <Route path={SIGN_UP.href} element={<SignUp />} />
           <Route path={FORGOT_PASSWORD.href} element={<ForgotPassword />} />
           <Route path={OFFERS.href} element={<Offers />} />
-          <Route path={CREATE_LISTING.href} element={<CreateListing />} />
+          <Route path={CREATE_LISTING.href} element={<PrivateRoute />}>
+            <Route path={CREATE_LISTING.href} element={<CreateListing />} />
+          </Route>
         </Routes>
       </Router>
 

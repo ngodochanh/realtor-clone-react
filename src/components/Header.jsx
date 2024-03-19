@@ -38,7 +38,7 @@ function Header() {
                 key={link.key}
                 className={`py-3 text-sm font-semibold cursor-pointer border-b-[3px] ${
                   link.href === SIGN_IN.href
-                    ? pathMatchRoute(PROFILE.href)
+                    ? pathMatchRoute(PROFILE.href) || pathMatchRoute(SIGN_IN.href)
                       ? 'text-black border-red-500'
                       : 'text-gray-400 border-b-transparent'
                     : pathMatchRoute(link.href)
