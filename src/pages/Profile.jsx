@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { CREATE_LISTING, HOME } from '../constants';
+import { CREATE_LISTING, EDIT_LISTING, HOME } from '../constants';
 import { FcHome } from 'react-icons/fc';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import Spinner from '../components/Spinner';
@@ -64,14 +64,12 @@ function Profile() {
   };
 
   const onEdit = (listingID) => {
-    navigate(`/edit-listing/${listingID}`);
+    navigate(`${EDIT_LISTING.href}/${listingID}`);
   };
 
-  if (loading) {
-    return <Spinner />;
-  }
-
   useEffect(() => {
+    setLoading(true);
+
     const fetchUserListings = async () => {
       const listingRef = collection(db, 'listings');
       const q = query(listingRef, where('userRef', '==', auth.currentUser.uid), orderBy('timestamp', 'desc'));
@@ -88,6 +86,10 @@ function Profile() {
 
     fetchUserListings();
   }, [auth.currentUser.uid]);
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <>
