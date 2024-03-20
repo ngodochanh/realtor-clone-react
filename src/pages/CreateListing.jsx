@@ -25,7 +25,7 @@ function CreateListing() {
     longitude: 0,
     images: {},
   });
-  const [geolocationEnabled, setGeoLocationEnabled] = useState(true);
+  const [geolocationEnabled, setGeoLocationEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const auth = getAuth();
   const navigate = useNavigate();

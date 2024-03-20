@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getAuth, signOut, updateProfile } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { doc, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { CREATE_LISTING, HOME } from '../constants';
 import { FcHome } from 'react-icons/fc';
@@ -52,6 +52,19 @@ function Profile() {
     } catch (error) {
       toast.error('Could not update the profile details');
     }
+  };
+
+  const onDelete = async (listingID) => {
+    if (window.confirm('Are you sure you want to delete?')) {
+      await deleteDoc(doc(db, 'listings', listingID));
+      const updatedListings = listings.filter((listing) => listing.id !== listingID);
+      setListings(updatedListings);
+      toast.success('Successfully deleted the listing');
+    }
+  };
+
+  const onEdit = (listingID) => {
+    navigate(`/edit-listing/${listingID}`);
   };
 
   if (loading) {
@@ -144,7 +157,13 @@ function Profile() {
 
             <ul className="grid mt-6 mb-6 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 ">
               {listings.map((listing) => (
-                <ListingItem key={listing.id} id={listing.id} listing={listing.data} />
+                <ListingItem
+                  key={listing.id}
+                  id={listing.id}
+                  listing={listing.data}
+                  onDelete={() => onDelete(listing.id)}
+                  onEdit={() => onEdit(listing.id)}
+                />
               ))}
             </ul>
           </>
