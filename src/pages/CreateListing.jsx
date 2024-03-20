@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { CATEGORY } from '../constants';
 
 function CreateListing() {
   const [formData, setFormData] = useState({
@@ -149,7 +150,7 @@ function CreateListing() {
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
     setLoading(false);
     toast.success('Listing created');
-    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
+    navigate(`${CATEGORY.href}/${formDataCopy.type}/${docRef.id}`);
   };
 
   if (loading) {

@@ -2,11 +2,12 @@ import Moment from 'react-moment';
 import { Link } from 'react-router-dom';
 import { FaLocationDot, FaTrash } from 'react-icons/fa6';
 import { MdEdit } from 'react-icons/md';
+import { CATEGORY } from '../constants';
 
 function ListingItem({ listing, id, onDelete, onEdit }) {
   return (
     <li className="relative bg-white flex flex-col justify-between items-center shadow-md hover:shadow-xl rounded-md overflow-hidden transition-shadow duration-150">
-      <Link to={`/category/${listing.type}/${id}`} className="contents">
+      <Link to={`${CATEGORY.href}/${listing.type}/${id}`} className="contents">
         <img
           src={listing.imgUrls[0]}
           alt="house"

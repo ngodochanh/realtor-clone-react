@@ -9,9 +9,20 @@ import Header from './components/Header';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './components/PrivateRoute';
-import { CREATE_LISTING, EDIT_LISTING, FORGOT_PASSWORD, HOME, OFFERS, PROFILE, SIGN_IN, SIGN_UP } from './constants';
+import {
+  CATEGORY,
+  CREATE_LISTING,
+  EDIT_LISTING,
+  FORGOT_PASSWORD,
+  HOME,
+  OFFERS,
+  PROFILE,
+  SIGN_IN,
+  SIGN_UP,
+} from './constants';
 import CreateListing from './pages/CreateListing';
 import EditListing from './pages/EditListing';
+import Listing from './pages/Listing';
 
 function App() {
   return (
@@ -27,6 +38,7 @@ function App() {
           <Route path={SIGN_IN.href} element={<SignIn />} />
           <Route path={SIGN_UP.href} element={<SignUp />} />
           <Route path={FORGOT_PASSWORD.href} element={<ForgotPassword />} />
+          <Route path={`${CATEGORY.href}/:categoryName/:listingId`} element={<Listing />} />
           <Route path={OFFERS.href} element={<Offers />} />
           <Route path={CREATE_LISTING.href} element={<PrivateRoute />}>
             <Route path={CREATE_LISTING.href} element={<CreateListing />} />

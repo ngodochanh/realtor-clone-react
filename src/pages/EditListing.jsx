@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate, useParams } from 'react-router-dom';
-import { HOME } from '../constants';
+import { CATEGORY, HOME } from '../constants';
 
 function EditListing() {
   const [formData, setFormData] = useState({
@@ -192,7 +192,7 @@ function EditListing() {
     const docRef = doc(db, 'listings', params.listingId);
     await updateDoc(docRef, formDataCopy);
     toast.success('Listing edited');
-    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
+    navigate(`${CATEGORY.href}/${formDataCopy.type}/${docRef.id}`);
   };
 
   return (
