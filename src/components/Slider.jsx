@@ -35,11 +35,10 @@ function Slider() {
     fetchUserListings();
   }, []);
 
-  console.log(listings);
-
   if (loading) {
     return <Spinner />;
   }
+
   return (
     <>
       {listings.length !== 0 && (
@@ -53,21 +52,21 @@ function Slider() {
             autoplay={{ delay: 3000 }}
           >
             {listings.map(({ data, id }) => (
-              <SwiperSlide key={id} onClick={() => navigate(`${CATEGORY.href}/${data.type}/${id}`)}>
+              <SwiperSlide key={id} onClick={() => navigate(`${CATEGORY.href}/${data?.type}/${id}`)}>
                 <div
                   className="relative w-full overflow-hidden h-[300px]"
-                  style={{ background: `url(${data.imgUrls[0]}) center no-repeat`, backgroundSize: 'cover' }}
+                  style={{ background: `url(${data?.imgUrls[0]}) center no-repeat`, backgroundSize: 'cover' }}
                 ></div>
 
                 <p className="text-[#f1faee] absolute left-1 top-3 font-medium max-w-[90%] bg-[#457b9d] shadow-lg opacity-90 p-2 rounded-br-3xl">
-                  {data.name}
+                  {data?.name}
                 </p>
 
                 <p className="text-[#f1faee] absolute left-1 bottom-1 font-medium max-w-[90%] bg-[#e63946] shadow-lg opacity-90 p-2 rounded-tr-3xl">
                   $
                   {data?.discountedPrice?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') ??
                     data?.regularPrice?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                  {data.type === 'rent' && ' / month'}
+                  {data?.type === 'rent' && ' / month'}
                 </p>
               </SwiperSlide>
             ))}

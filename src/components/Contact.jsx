@@ -31,7 +31,7 @@ function Contact({ userRef, listing }) {
       {landlord && (
         <div className="flex flex-col w-full">
           <p>
-            Contact {landlord.name} for the <span className="capitalize">{listing.name.toUpperCase()}</span>
+            Contact {landlord?.name} for the <span className="capitalize">{listing?.name.toUpperCase()}</span>
           </p>
 
           <div className="mt-3 mb-6">
@@ -44,7 +44,7 @@ function Contact({ userRef, listing }) {
             ></textarea>
           </div>
 
-          <a href={`mailto:${landlord.email}?Subject=${listing.name}&body=${message}`}>
+          <a href={`mailto:${landlord?.email}?Subject=${listing?.name}&body=${message}`}>
             <button
               type="button"
               className="px-7 py-3 bg-blue-600 text-white rounded text-sm uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg  active:bg-blue-800 active:shadow-lg ease-in-out w-full text-center mb-6"
