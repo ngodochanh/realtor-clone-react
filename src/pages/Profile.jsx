@@ -23,6 +23,26 @@ function Profile() {
 
   const { name, email } = formData;
 
+  useEffect(() => {
+    setLoading(true);
+
+    const fetchUserListings = async () => {
+      const listingRef = collection(db, 'listings');
+      const q = query(listingRef, where('userRef', '==', auth.currentUser.uid), orderBy('timestamp', 'desc'));
+
+      const querySnap = await getDocs(q);
+      let listingArr = [];
+      querySnap.forEach((doc) => {
+        return listingArr.push({ id: doc.id, data: doc.data() });
+      });
+
+      setListings(listingArr);
+      setLoading(false);
+    };
+
+    fetchUserListings();
+  }, [auth.currentUser.uid]);
+
   const onLogout = async () => {
     try {
       await signOut(auth);
@@ -66,26 +86,6 @@ function Profile() {
   const onEdit = (listingID) => {
     navigate(`${EDIT_LISTING.href}/${listingID}`);
   };
-
-  useEffect(() => {
-    setLoading(true);
-
-    const fetchUserListings = async () => {
-      const listingRef = collection(db, 'listings');
-      const q = query(listingRef, where('userRef', '==', auth.currentUser.uid), orderBy('timestamp', 'desc'));
-
-      const querySnap = await getDocs(q);
-      let listingArr = [];
-      querySnap.forEach((doc) => {
-        return listingArr.push({ id: doc.id, data: doc.data() });
-      });
-
-      setListings(listingArr);
-      setLoading(false);
-    };
-
-    fetchUserListings();
-  }, [auth.currentUser.uid]);
 
   if (loading) {
     return <Spinner />;

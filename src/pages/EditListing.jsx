@@ -33,23 +33,6 @@ function EditListing() {
   const params = useParams();
   const [listing, setListing] = useState([]);
 
-  const {
-    type,
-    name,
-    bedrooms,
-    bathrooms,
-    parking,
-    furnished,
-    address,
-    description,
-    offer,
-    regularPrice,
-    discountedPrice,
-    latitude,
-    longitude,
-    images,
-  } = formData;
-
   useEffect(() => {
     setLoading(true);
     const fetchListing = async () => {
@@ -79,9 +62,22 @@ function EditListing() {
     }
   }, [auth.currentUser.uid, listing, navigate]);
 
-  if (loading) {
-    return <Spinner />;
-  }
+  const {
+    type,
+    name,
+    bedrooms,
+    bathrooms,
+    parking,
+    furnished,
+    address,
+    description,
+    offer,
+    regularPrice,
+    discountedPrice,
+    latitude,
+    longitude,
+    images,
+  } = formData;
 
   const onChange = (e) => {
     let boolean = null;
@@ -194,6 +190,10 @@ function EditListing() {
     toast.success('Listing edited');
     navigate(`${CATEGORY.href}/${formDataCopy.type}/${docRef.id}`);
   };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <main className="max-w-md px-2 mx-auto">
