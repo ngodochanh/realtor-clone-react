@@ -31,12 +31,12 @@ function Profile() {
       const q = query(listingRef, where('userRef', '==', auth.currentUser.uid), orderBy('timestamp', 'desc'));
 
       const querySnap = await getDocs(q);
-      let listingArr = [];
+      let queriedListings = [];
       querySnap.forEach((doc) => {
-        return listingArr.push({ id: doc.id, data: doc.data() });
+        return queriedListings.push({ id: doc.id, data: doc.data() });
       });
 
-      setListings(listingArr);
+      setListings(queriedListings);
       setLoading(false);
     };
 

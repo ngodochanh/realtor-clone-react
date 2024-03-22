@@ -23,12 +23,12 @@ function Slider() {
       const q = query(listingRef, orderBy('timestamp', 'desc'), limit(5));
 
       const querySnap = await getDocs(q);
-      let listingArr = [];
+      let queriedListings = [];
       querySnap.forEach((doc) => {
-        return listingArr.push({ id: doc.id, data: doc.data() });
+        return queriedListings.push({ id: doc.id, data: doc.data() });
       });
 
-      setListings(listingArr);
+      setListings(queriedListings);
       setLoading(false);
     };
 
