@@ -23,6 +23,7 @@ import {
 import CreateListing from './pages/CreateListing';
 import EditListing from './pages/EditListing';
 import Listing from './pages/Listing';
+import Category from './pages/Category';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path={FORGOT_PASSWORD.href} element={<ForgotPassword />} />
           <Route path={`${CATEGORY.href}/:categoryName/:listingId`} element={<Listing />} />
           <Route path={OFFERS.href} element={<Offers />} />
+          <Route path={`${CATEGORY.href}/:categoryName`} element={<Category />} />
           <Route path={CREATE_LISTING.href} element={<PrivateRoute />}>
             <Route path={CREATE_LISTING.href} element={<CreateListing />} />
           </Route>

@@ -29,10 +29,10 @@ function Slider() {
       });
 
       setListings(queriedListings);
-      setLoading(false);
     };
 
     fetchUserListings();
+    setLoading(false);
   }, []);
 
   if (loading) {

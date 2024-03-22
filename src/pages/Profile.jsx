@@ -37,10 +37,10 @@ function Profile() {
       });
 
       setListings(queriedListings);
-      setLoading(false);
     };
 
     fetchUserListings();
+    setLoading(false);
   }, [auth.currentUser.uid]);
 
   const onLogout = async () => {

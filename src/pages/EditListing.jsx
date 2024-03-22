@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import Spinner from '../components/Spinner';
 import { toast } from 'react-toastify';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CATEGORY, HOME } from '../constants';
 
@@ -35,6 +35,7 @@ function EditListing() {
 
   useEffect(() => {
     setLoading(true);
+
     const fetchListing = async () => {
       const docRef = doc(db, 'listings', params.listingId);
       const docSnap = await getDoc(docRef);
@@ -45,7 +46,6 @@ function EditListing() {
           latitude: docSnap.data().geolocation.lat,
           longitude: docSnap.data().geolocation.lng,
         });
-        setLoading(false);
       } else {
         navigate(HOME.href);
         toast.error('Listing does not exist');
@@ -53,6 +53,7 @@ function EditListing() {
     };
 
     fetchListing();
+    setLoading(false);
   }, [navigate, params.listingId]);
 
   useEffect(() => {
@@ -121,15 +122,13 @@ function EditListing() {
     // Xử lý tạo độ
     let geolocation = {};
     let location;
-    if (geolocationEnabled) {
-      geolocation.lat = latitude;
-      geolocation.lng = longitude;
+    if (!geolocationEnabled) {
+      geolocation.lat = +latitude;
+      geolocation.lng = +longitude;
     }
 
     const storeImage = (image) => {
       return new Promise((resolve, reject) => {
-        const storage = getStorage();
-
         const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
         const storageRef = ref(storage, fileName);
         const uploadTask = uploadBytesResumable(storageRef, image);
@@ -160,14 +159,39 @@ function EditListing() {
       });
     };
 
-    const imgUrls = await Promise.all([...images].map((image) => storeImage(image)))
-      .then((urls) => {
-        return urls.filter((url) => url !== undefined);
-      })
-      .catch((error) => {
-        setLoading(false);
-        toast.error('Images not uploaded');
+    const deleteImage = async (imageUrl) => {
+      const imageRef = ref(storage, imageUrl);
+
+      try {
+        await deleteObject(imageRef);
+        console.log('Image deleted from database:', imageUrl);
+        toast.success('Image deleted from database:', imageUrl);
+      } catch (error) {
+        console.error('Error deleting image from database:', error);
+        toast.error('Error deleting image from database');
+      }
+    };
+
+    const newImagesSelected = images.length > 0;
+    let imgUrls = [];
+    if (!newImagesSelected) {
+      imgUrls = formData.imgUrls || [];
+    } else {
+      imgUrls = await Promise.all([...images].map((image) => storeImage(image)))
+        .then((urls) => {
+          return urls.filter((url) => url !== undefined);
+        })
+        .catch((error) => {
+          setLoading(false);
+          toast.error('Images not uploaded');
+        });
+
+      formData.imgUrls.forEach((imageUrl) => {
+        if (!imgUrls.includes(imageUrl)) {
+          deleteImage(imageUrl);
+        }
       });
+    }
 
     // thêm url hình ảnh, thêm vị trí địa lý
     // xóa vĩ độ và kinh độ (do không sử dụng nó), địa chỉ (bởi vì đã thay đổi địa chỉ thành đến vĩ độ và kinh độ là 2)
@@ -340,12 +364,13 @@ function EditListing() {
             <div>
               <p className="text-lg mt-6 font-semibold">Latitude</p>
               <input
-                type="number"
+                type="text"
                 name="latitude"
                 value={latitude}
                 onChange={onChange}
                 min="-90"
                 max="90"
+                pattern="[0-9]+(\.[0-9]+)?"
                 required
                 className="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:bg-white focus:border-slate-600 focus:text-gray-700 text-center"
               />
@@ -354,12 +379,13 @@ function EditListing() {
             <div>
               <p className="text-lg mt-6 font-semibold">Longitude</p>
               <input
-                type="number"
+                type="text"
                 name="longitude"
                 value={longitude}
                 onChange={onChange}
                 min="-180"
                 max="180"
+                pattern="-?\d+(\.\d+)?"
                 required
                 className="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:bg-white focus:border-slate-600 focus:text-gray-700 text-center"
               />
@@ -466,7 +492,6 @@ function EditListing() {
             onChange={onChange}
             accept=".jpg, .png, .jpeg"
             multiple
-            required
             className="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded transition 
             duration-150 ease-in-out focus:bg-white focus:border-slate-600"
           />

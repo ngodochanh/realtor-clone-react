@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import Spinner from '../components/Spinner';
 import { toast } from 'react-toastify';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { CATEGORY } from '../constants';
 
@@ -90,14 +90,13 @@ function CreateListing() {
     // Xử lý tạo độ
     let geolocation = {};
     let location;
-    if (geolocationEnabled) {
-      geolocation.lat = latitude;
-      geolocation.lng = longitude;
+    if (!geolocationEnabled) {
+      geolocation.lat = +latitude;
+      geolocation.lng = +longitude;
     }
 
     const storeImage = (image) => {
       return new Promise((resolve, reject) => {
-        const storage = getStorage();
         const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
         const storageRef = ref(storage, fileName);
         const uploadTask = uploadBytesResumable(storageRef, image);
@@ -302,12 +301,13 @@ function CreateListing() {
             <div>
               <p className="text-lg mt-6 font-semibold">Latitude</p>
               <input
-                type="number"
+                type="text"
                 name="latitude"
                 value={latitude}
                 onChange={onChange}
                 min="-90"
                 max="90"
+                pattern="[0-9]+(\.[0-9]+)?"
                 required
                 className="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:bg-white focus:border-slate-600 focus:text-gray-700 text-center"
               />
@@ -316,12 +316,13 @@ function CreateListing() {
             <div>
               <p className="text-lg mt-6 font-semibold">Longitude</p>
               <input
-                type="number"
+                type="text"
                 name="longitude"
                 value={longitude}
                 onChange={onChange}
                 min="-180"
                 max="180"
+                pattern="-?\d+(\.\d+)?"
                 required
                 className="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:bg-white focus:border-slate-600 focus:text-gray-700 text-center"
               />

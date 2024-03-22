@@ -27,10 +27,10 @@ function Offers() {
         });
 
         setListings(queriedListings);
-        setLoading(false);
       };
 
       fetchUserListings();
+      setLoading(false);
     } catch (error) {
       console.log(error);
       toast.error('Could not fetch listing');
@@ -38,6 +38,8 @@ function Offers() {
   }, []);
 
   const onFetchMoreListings = async () => {
+    setLoading(true);
+
     try {
       const fetchUserListings = async () => {
         const listingRef = collection(db, 'listings');
@@ -58,10 +60,10 @@ function Offers() {
         });
 
         setListings((prevState) => [...prevState, ...queriedListings]);
-        setLoading(false);
       };
 
       fetchUserListings();
+      setLoading(false);
     } catch (error) {
       console.log(error);
       toast.error('Could not fetch listing');
