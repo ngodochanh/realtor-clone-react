@@ -32,6 +32,22 @@ function EditListing() {
   const navigate = useNavigate();
   const params = useParams();
   const [listing, setListing] = useState([]);
+  const {
+    type,
+    name,
+    bedrooms,
+    bathrooms,
+    parking,
+    furnished,
+    address,
+    description,
+    offer,
+    regularPrice,
+    discountedPrice,
+    latitude,
+    longitude,
+    images,
+  } = formData;
 
   useEffect(() => {
     setLoading(true);
@@ -62,23 +78,6 @@ function EditListing() {
       navigate(HOME.href);
     }
   }, [auth.currentUser.uid, listing, navigate]);
-
-  const {
-    type,
-    name,
-    bedrooms,
-    bathrooms,
-    parking,
-    furnished,
-    address,
-    description,
-    offer,
-    regularPrice,
-    discountedPrice,
-    latitude,
-    longitude,
-    images,
-  } = formData;
 
   const onChange = (e) => {
     let boolean = null;
@@ -113,12 +112,6 @@ function EditListing() {
       return;
     }
 
-    if (images.length > 6) {
-      setLoading(false);
-      toast.error('Maximum 6 images are allowed');
-      return;
-    }
-
     // Xử lý tạo độ
     let geolocation = {};
     let location;
@@ -127,92 +120,127 @@ function EditListing() {
       geolocation.lng = +longitude;
     }
 
-    const storeImage = (image) => {
-      return new Promise((resolve, reject) => {
-        const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
-        const storageRef = ref(storage, fileName);
-        const uploadTask = uploadBytesResumable(storageRef, image);
-
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            toast.info(`Uploading ${image.name} is ${progress} % done`);
-            switch (snapshot.state) {
-              case 'paused':
-                toast.info(`Uploading ${image.name} is paused`);
-                break;
-              case 'running':
-                toast.info(`Uploading ${image.name} running`);
-                break;
-            }
-          },
-          (error) => {
-            reject(error);
-          },
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              resolve(downloadURL);
-            });
-          }
-        );
-      });
-    };
-
-    const deleteImage = async (imageUrl) => {
-      const imageRef = ref(storage, imageUrl);
-
-      try {
-        await deleteObject(imageRef);
-        console.log('Image deleted from database:', imageUrl);
-        toast.success('Image deleted from database:', imageUrl);
-      } catch (error) {
-        console.error('Error deleting image from database:', error);
-        toast.error('Error deleting image from database');
+    let formDataCopy = {};
+    if (images) {
+      if (images.length > 6) {
+        setLoading(false);
+        toast.error('Maximum 6 images are allowed');
+        return;
       }
-    };
 
-    const newImagesSelected = images.length > 0;
-    let imgUrls = [];
-    if (!newImagesSelected) {
-      imgUrls = formData.imgUrls || [];
-    } else {
-      imgUrls = await Promise.all([...images].map((image) => storeImage(image)))
-        .then((urls) => {
-          return urls.filter((url) => url !== undefined);
-        })
-        .catch((error) => {
+      // > 2mb
+      let errorFile = 0;
+      for (const file of images) {
+        if (handleSingleImage(file)) {
+          errorFile++;
           setLoading(false);
-          toast.error('Images not uploaded');
-        });
-
-      formData.imgUrls.forEach((imageUrl) => {
-        if (!imgUrls.includes(imageUrl)) {
-          deleteImage(imageUrl);
+          toast.error(`File ${file.name} exceeds the 2MB limit.`);
         }
-      });
+      }
+
+      if (errorFile > 0) {
+        return;
+      }
+
+      const storeImage = (image) => {
+        return new Promise((resolve, reject) => {
+          const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
+          const storageRef = ref(storage, fileName);
+          const uploadTask = uploadBytesResumable(storageRef, image);
+
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              toast.info(`Uploading ${image.name} is ${progress} % done`);
+              switch (snapshot.state) {
+                case 'paused':
+                  toast.info(`Uploading ${image.name} is paused`);
+                  break;
+                case 'running':
+                  toast.info(`Uploading ${image.name} running`);
+                  break;
+              }
+            },
+            (error) => {
+              reject(error);
+            },
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                resolve(downloadURL);
+              });
+            }
+          );
+        });
+      };
+
+      const deleteImage = async (imageUrl) => {
+        const imageRef = ref(storage, imageUrl);
+
+        try {
+          await deleteObject(imageRef);
+          console.log('Image deleted from database:', imageUrl);
+          toast.success('Image deleted from database:', imageUrl);
+        } catch (error) {
+          console.error('Error deleting image from database:', error);
+          toast.error('Error deleting image from database');
+        }
+      };
+
+      const newImagesSelected = images.length > 0;
+      let imgUrls = [];
+      if (!newImagesSelected) {
+        imgUrls = formData.imgUrls || [];
+      } else {
+        imgUrls = await Promise.all([...images].map((image) => storeImage(image)))
+          .then((urls) => {
+            return urls.filter((url) => url !== undefined);
+          })
+          .catch((error) => {
+            setLoading(false);
+            toast.error('Images not uploaded');
+          });
+
+        formData.imgUrls.forEach((imageUrl) => {
+          if (!imgUrls.includes(imageUrl)) {
+            deleteImage(imageUrl);
+          }
+        });
+      }
+
+      formDataCopy = {
+        ...formData,
+        imgUrls,
+        geolocation,
+        timestamp: serverTimestamp(),
+        userRef: auth.currentUser.uid,
+      };
+
+      delete formDataCopy.images;
+    } else {
+      formDataCopy = {
+        ...formData,
+        geolocation,
+        timestamp: serverTimestamp(),
+        userRef: auth.currentUser.uid,
+      };
     }
 
-    // thêm url hình ảnh, thêm vị trí địa lý
-    // xóa vĩ độ và kinh độ (do không sử dụng nó), địa chỉ (bởi vì đã thay đổi địa chỉ thành đến vĩ độ và kinh độ là 2)
-    const formDataCopy = {
-      ...formData,
-      imgUrls,
-      geolocation,
-      timestamp: serverTimestamp(),
-      userRef: auth.currentUser.uid,
-    };
-
-    delete formDataCopy.images;
     !formDataCopy.offer && delete formDataCopy.discountedPrice;
     delete formDataCopy.latitude;
     delete formDataCopy.longitude;
-
     setLoading(false);
     const docRef = doc(db, 'listings', params.listingId);
     await updateDoc(docRef, formDataCopy);
     toast.success('Listing edited');
     navigate(`${CATEGORY.href}/${formDataCopy.type}/${docRef.id}`);
+  };
+
+  const handleSingleImage = (file) => {
+    const fileSizeInBytes = file.size;
+    const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+    return fileSizeInMB > 2 ? true : false;
   };
 
   if (loading) {

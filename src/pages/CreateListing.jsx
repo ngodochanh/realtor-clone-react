@@ -87,6 +87,20 @@ function CreateListing() {
       return;
     }
 
+    // > 2mb
+    let errorFile = 0;
+    for (const file of images) {
+      if (handleSingleImage(file)) {
+        errorFile++;
+        setLoading(false);
+        toast.error(`File ${file.name} exceeds the 2MB limit.`);
+      }
+    }
+
+    if (errorFile > 0) {
+      return;
+    }
+
     // Xử lý tạo độ
     let geolocation = {};
     let location;
@@ -150,6 +164,13 @@ function CreateListing() {
     setLoading(false);
     toast.success('Listing created');
     navigate(`${CATEGORY.href}/${formDataCopy.type}/${docRef.id}`);
+  };
+
+  const handleSingleImage = (file) => {
+    const fileSizeInBytes = file.size;
+    const fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+    return fileSizeInMB > 2 ? true : false;
   };
 
   if (loading) {
