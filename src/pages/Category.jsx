@@ -34,7 +34,6 @@ function Category() {
       fetchUserListings();
       setLoading(false);
     } catch (error) {
-      console.log(error);
       toast.error('Could not fetch listing');
     }
   }, [params.categoryName]);
@@ -64,7 +63,6 @@ function Category() {
 
       fetchUserListings();
     } catch (error) {
-      console.log(error);
       toast.error('Could not fetch listing');
     }
   };

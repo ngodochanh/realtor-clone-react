@@ -26,7 +26,7 @@ function EditListing() {
     longitude: 0,
     images: {},
   });
-  const [geolocationEnabled, setGeoLocationEnabled] = useState(false);
+  const [geolocationEnabled, setGeoLocationEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const auth = getAuth();
   const navigate = useNavigate();
@@ -115,7 +115,25 @@ function EditListing() {
     // Xử lý tạo độ
     let geolocation = {};
     let location;
-    if (!geolocationEnabled) {
+    if (geolocationEnabled) {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${
+          import.meta.env.VITE_REACT_APP_GEOCODE_API_KEY
+        }`
+      );
+      const data = await response.json();
+
+      geolocation.lat = data.results[0]?.geometry.location.lat ?? 0;
+      geolocation.lng = data.results[0]?.geometry.location.lng ?? 0;
+
+      location = data.status === 'ZERO_RESULTS' && undefined;
+
+      if (location === undefined) {
+        setLoading(false);
+        toast.error('Please enter a correct address');
+        return;
+      }
+    } else {
       geolocation.lat = +latitude;
       geolocation.lng = +longitude;
     }
@@ -179,8 +197,7 @@ function EditListing() {
 
         try {
           await deleteObject(imageRef);
-          console.log('Image deleted from database:', imageUrl);
-          toast.success('Image deleted from database:', imageUrl);
+          toast.success('The user has successfully replaced all old images');
         } catch (error) {
           console.error('Error deleting image from database:', error);
           toast.error('Error deleting image from database');
